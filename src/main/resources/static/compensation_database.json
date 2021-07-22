@@ -1,0 +1,12 @@
+[
+  {
+    "employeeId" : "16a596ae-edd3-4847-99fe-c4518e82c86f",
+    "salary" : 70000,
+    "effectiveDate" : "1960-01-01"
+  },
+  {
+    "employeeId" : "b7839309-3348-463b-a7e3-5de1c168beb3",
+    "salary" : 65000,
+    "effectiveDate" : "1960-01-01"
+  }
+]

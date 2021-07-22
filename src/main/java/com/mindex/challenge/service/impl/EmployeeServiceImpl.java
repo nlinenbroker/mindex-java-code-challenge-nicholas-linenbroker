@@ -7,6 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -44,6 +46,26 @@ public class EmployeeServiceImpl implements EmployeeService {
     public Employee update(Employee employee) {
         LOG.debug("Updating employee [{}]", employee);
 
+        // Check and update all employees in the repository that have the specified employee listed in directReports,
+        // necessary to keep all employee and reportingStructure read requests accurate if an employee update involving
+        // directReports occurs
+        String employeeId = employee.getEmployeeId();
+        List<Employee> employees = employeeRepository.findAll();
+        for(Employee potentialEmployeeToUpdate : employees) {
+            List<Employee> directReports = potentialEmployeeToUpdate.getDirectReports();
+            if(directReports != null) {
+                for (Employee report : directReports) {
+                    String reportId = report.getEmployeeId();
+                    if (employeeId.equals(reportId)) {
+                        directReports.remove(report);
+                        directReports.add(employee);
+                        potentialEmployeeToUpdate.setDirectReports(directReports);
+                        update(potentialEmployeeToUpdate);
+                        break;
+                    }
+                }
+            }
+        }
         return employeeRepository.save(employee);
     }
 }
